@@ -102,6 +102,17 @@ obj-$(CONFIG_CRYPTO_GHASH) += ghash-generic.o
 obj-$(CONFIG_CRYPTO_USER_API) += af_alg.o
 obj-$(CONFIG_CRYPTO_USER_API_HASH) += algif_hash.o
 obj-$(CONFIG_CRYPTO_USER_API_SKCIPHER) += algif_skcipher.o
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_CRYPTO_USER_API_RNG) += algif_rng.o
+obj-$(CONFIG_CRYPTO_USER_API_AEAD) += algif_aead.o
+obj-$(CONFIG_CRYPTO_ZSTD) += zstd.o
+
+ecdh_generic-y := ecc.o
+ecdh_generic-y += ecdh.o
+ecdh_generic-y += ecdh_helper.o
+obj-$(CONFIG_CRYPTO_ECDH) += ecdh_generic.o
+>>>>>>> 6576d939b169c (UPSTREAM: crypto: zstd - Add zstd support)
 
 #
 # generic algorithms and the async_tx api
