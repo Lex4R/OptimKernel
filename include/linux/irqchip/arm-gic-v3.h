@@ -349,7 +349,7 @@ struct rdists {
 
 static inline void gic_write_eoir(u64 irq)
 {
-	asm volatile("msr_s " __stringify(ICC_EOIR1_EL1) ", %0" : : "r" (irq));
+	asm volatile(__msr_s(ICC_EOIR1_EL1, "%0") : : "r" (irq));
 	isb();
 }
 
