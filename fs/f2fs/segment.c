@@ -908,6 +908,8 @@ int f2fs_disable_cp_again(struct f2fs_sb_info *sbi, block_t unusable)
 	if (is_sbi_flag_set(sbi, SBI_CP_DISABLED_QUICK) &&
 		dirty_segments(sbi) > ovp_hole_segs)
 		return -EAGAIN;
+	if (test_opt(sbi, LFS) && dirty_segments(sbi) > reserved_segments(sbi))
+		return -EAGAIN;
 	return 0;
 }
 

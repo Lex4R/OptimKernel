@@ -844,10 +844,8 @@ static int parse_options(struct super_block *sb, char *options)
 		}
 	}
 
-	if (test_opt(sbi, DISABLE_CHECKPOINT) && test_opt(sbi, LFS)) {
-		f2fs_err(sbi, "LFS not compatible with checkpoint=disable\n");
-		return -EINVAL;
-	}
+	if (test_opt(sbi, DISABLE_CHECKPOINT) && test_opt(sbi, LFS))
+		f2fs_warn(sbi, "Should be very careful since LFS not fully compatible with checkpoint=disable\n");
 
 	/* Not pass down write hints if the number of active logs is lesser
 	 * than NR_CURSEG_TYPE.

@@ -1948,7 +1948,7 @@ bool f2fs_should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
 {
 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
 
-	if (test_opt(sbi, LFS))
+	if (f2fs_sb_has_blkzoned(sbi))
 		return true;
 	if (S_ISDIR(inode->i_mode))
 		return true;
