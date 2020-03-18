@@ -1417,6 +1417,9 @@ config CC_OPTIMIZE_FOR_SIZE
 
 	  If unsure, say N.
 
+config LTO_GCC
+	bool "Enable GCC Link Time Optimization"
+
 config SYSCTL
 	bool
 

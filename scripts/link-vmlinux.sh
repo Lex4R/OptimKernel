@@ -41,8 +41,22 @@ info()
 # ${1} output file
 modpost_link()
 {
-	${LD} ${LDFLAGS} -r -o ${1} ${KBUILD_VMLINUX_INIT}                   \
+	${LDFINAL} ${LDFLAGS} -r -o ${1} ${KBUILD_VMLINUX_INIT}                   \
 		--start-group ${KBUILD_VMLINUX_MAIN} --end-group
+}
+
+# If CONFIG_LTO_CLANG is selected, we postpone running recordmcount until
+# we have compiled LLVM IR to an object file.
+recordmcount()
+{
+	if [ -z "${CONFIG_LTO_CLANG}" ]; then
+		return
+	fi
+
+	if [ -n "${CONFIG_FTRACE_MCOUNT_RECORD}" ]; then
+		scripts/recordmcount ${RECORDMCOUNT_FLAGS} $*
+	fi
+>>>>>>> 2e5b3eb89e31 (lto: Add Link Time Optimization support for GCC)
 }
 
 # Link of vmlinux
@@ -53,9 +67,31 @@ vmlinux_link()
 	local lds="${objtree}/${KBUILD_LDS}"
 
 	if [ "${SRCARCH}" != "um" ]; then
+<<<<<<< HEAD
 		${LD} ${LDFLAGS} ${LDFLAGS_vmlinux} -o ${2}                  \
 			-T ${lds} ${KBUILD_VMLINUX_INIT}                     \
 			--start-group ${KBUILD_VMLINUX_MAIN} --end-group ${1}
+=======
+		local ld=${LDFINAL}
+		local ldflags="${LDFLAGS} ${LDFLAGS_vmlinux}"
+
+		if [ -n "${LDFINAL_vmlinux}" ]; then
+			ld=${LDFINAL_vmlinux}
+			ldflags="${LDFLAGS_FINAL_vmlinux} ${LDFLAGS_vmlinux}"
+		fi
+
+		if [[ -n "${CONFIG_THIN_ARCHIVES}" && -z "${CONFIG_LTO_CLANG}" ]]; then
+			objects="--whole-archive built-in.o ${1}"
+		else
+			objects="${KBUILD_VMLINUX_INIT}			\
+				--start-group				\
+				${KBUILD_VMLINUX_MAIN}			\
+				--end-group				\
+				${1}"
+		fi
+
+		${ld} ${ldflags} -o ${2} -T ${lds} ${objects}
+>>>>>>> 2e5b3eb89e31 (lto: Add Link Time Optimization support for GCC)
 	else
 		${CC} ${CFLAGS_vmlinux} -o ${2}                              \
 			-Wl,-T,${lds} ${KBUILD_VMLINUX_INIT}                 \
