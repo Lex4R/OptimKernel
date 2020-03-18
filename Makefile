@@ -623,6 +623,23 @@ KBUILD_AFLAGS	+= $(CLANG_FLAGS)
 export CLANG_FLAGS
 endif
 
+ifdef CONFIG_LTO
+ifeq ($(cc-name),gcc)
+LTO_CFLAGS    := -flto -flto=jobserver -fno-fat-lto-objects \
+                 -fuse-linker-plugin -fwhole-program
+LTO_LDFLAGS   := $(LTO_CFLAGS) -Wno-lto-type-mismatch -Wno-psabi
+LDFINAL       := $(CONFIG_SHELL) $(srctree)/scripts/gcc-ld $(LTO_LDFLAGS)
+AR            := $(CROSS_COMPILE)gcc-ar
+NM            := $(CROSS_COMPILE)gcc-nm
+DISABLE_LTO   := -fno-lto
+export DISABLE_LTO LDFINAL
+endif
+KBUILD_CFLAGS	+= $(LTO_CFLAGS)
+else
+LDFINAL       := $(LD)
+export LDFINAL
+endif
+
 include $(srctree)/arch/$(SRCARCH)/Makefile
 
 KBUILD_CFLAGS	+= $(call cc-option,-fno-delete-null-pointer-checks,)
