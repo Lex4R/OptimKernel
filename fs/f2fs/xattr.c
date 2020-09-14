@@ -38,7 +38,7 @@ static void xattr_free(struct f2fs_sb_info *sbi, void *xattr_addr,
 	if (is_inline)
 		kmem_cache_free(sbi->inline_xattr_slab, xattr_addr);
 	else
-		kvfree(xattr_addr);
+		kfree(xattr_addr);
 }
 
 static size_t f2fs_xattr_generic_list(struct dentry *dentry, char *list,
@@ -472,7 +472,7 @@ static int read_all_xattrs(struct inode *inode, struct page *ipage,
 	*base_addr = txattr_addr;
 	return 0;
 fail:
-	kvfree(txattr_addr);
+	kfree(txattr_addr);
 	return err;
 }
 
@@ -639,7 +639,7 @@ ssize_t f2fs_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
 	}
 	error = buffer_size - rest;
 cleanup:
-	kvfree(base_addr);
+	kfree(base_addr);
 	return error;
 }
 
@@ -779,7 +779,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
 	if (!error && S_ISDIR(inode->i_mode))
 		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_CP);
 exit:
-	kvfree(base_addr);
+	kfree(base_addr);
 	return error;
 }
 
