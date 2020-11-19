@@ -50,5 +50,6 @@ usb_f_ipc-y                     := f_ipc.o
 obj-$(CONFIG_USB_F_IPC)         += usb_f_ipc.o
 usb_f_usbnet-y			:= f_usbnet.o
 obj-$(CONFIG_USB_ANDROID_USBNET) += usb_f_usbnet.o
-
+usb_f_hid-y                     := f_hid.o
+obj-$(CONFIG_USB_G_ANDROID)     += usb_f_hid.o
 
