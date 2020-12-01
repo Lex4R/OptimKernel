@@ -1,3 +1,4 @@
+CFLAGS_REMOVE_empty.o += $(LTO_CFLAGS)
 hostprogs-y	:= modpost mk_elfconfig
 always		:= $(hostprogs-y) empty.o
 
