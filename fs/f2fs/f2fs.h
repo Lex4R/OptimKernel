@@ -1420,8 +1420,11 @@ struct f2fs_sb_info {
 	bool iostat_enable;
 
 	/* For sysfs suppport */
-	struct kobject s_kobj;
+	struct kobject s_kobj;			/* /sys/fs/f2fs/<devname> */
 	struct completion s_kobj_unregister;
+
+	struct kobject s_stat_kobj;		/* /sys/fs/f2fs/<devname>/stat */
+	struct completion s_stat_kobj_unregister;
 
 	/* For shrinker support */
 	struct list_head s_list;
