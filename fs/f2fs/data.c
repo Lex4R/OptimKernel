@@ -1624,6 +1624,7 @@ next:
 	}
 
 	if (size) {
+		flags |= FIEMAP_EXTENT_MERGED;
 		if (f2fs_encrypted_inode(inode))
 			flags |= FIEMAP_EXTENT_DATA_ENCRYPTED;
 
