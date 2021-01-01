@@ -1565,9 +1565,9 @@ void SetStateAttachedSource(void)
 
 	setStateSource(TRUE);
 
-	platform_notify_cc_orientation(blnCCPinIsCC2);
+	platform_notify_cc_orientation(blnCCPinIsCC2 == TRUE ? CC2 : CC1);
 
-	USBPDEnable(TRUE, TRUE);	// Enable the USB PD state machine if applicable (no need to write to Device again), set as DFP
+	USBPDEnable(TRUE, (SourceOrSink) TRUE);	// Enable the USB PD state machine if applicable (no need to write to Device again), set as DFP
 	StateTimer = tIllegalCable;	// Start dangling illegal cable timeout
 
 	platform_toggleAudioSwitch(fsa_usb_mode);
@@ -1602,9 +1602,9 @@ void SetStateAttachedSink(void)
 		dual_role_instance_changed(chip->dual_role);
 	ConnState = AttachedSink;	// Set the state machine variable to Attached.Sink
 	setStateSink();
-	platform_notify_cc_orientation(blnCCPinIsCC2);
+	platform_notify_cc_orientation(blnCCPinIsCC2 == TRUE ? CC2 : CC1);
 
-	USBPDEnable(TRUE, FALSE);	// Enable the USB PD state machine (no need to write Device again since we are doing it here)
+	USBPDEnable(TRUE, (SourceOrSink) FALSE);	// Enable the USB PD state machine (no need to write Device again since we are doing it here)
 	StateTimer = T_TIMER_DISABLE;	// Disable the state timer, not used in this state
 	platform_toggleAudioSwitch(fsa_usb_mode);
 	usbc_psy.type = POWER_SUPPLY_TYPE_USBC_SINK;
@@ -1813,7 +1813,7 @@ void SetStateAudioAccessory(void)
 		/*In case of detection CC orientation failed*/
 		if ((!blnCCPinIsCC2) && (!blnCCPinIsCC1))
 			blnCCPinIsCC2 = TRUE;
-		platform_notify_cc_orientation(blnCCPinIsCC2);
+		platform_notify_cc_orientation(blnCCPinIsCC2 == TRUE ? CC2 : CC1);
 		if (0 != platform_set_usb_device_enable(TRUE))
 			FUSB_LOG("Failed to enable USB device!\n");
 		usbc_psy.type = POWER_SUPPLY_TYPE_USBC_SINK;
@@ -1842,9 +1842,9 @@ void SetStatePoweredAccessory(void)
 		DeviceWrite(regControl0, 1, &Registers.Control.byte[0]);
 	}
 
-	platform_notify_cc_orientation(blnCCPinIsCC2);
+	platform_notify_cc_orientation(blnCCPinIsCC2 == TRUE ? CC2 : CC1);
 
-	USBPDEnable(TRUE, TRUE);
+	USBPDEnable(TRUE, (SourceOrSink) TRUE);
 
 	StateTimer = tAMETimeout;
 	usbc_psy.type = POWER_SUPPLY_TYPE_USBC;

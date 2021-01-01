@@ -6644,11 +6644,12 @@ static int msm_pcie_pm_suspend(struct pci_dev *dev,
 	if (!ret_l23)
 		PCIE_DBG(pcie_dev, "RC%d: PM_Enter_L23 is received\n",
 			pcie_dev->rc_idx);
-	else
+	else {
 		PCIE_DBG(pcie_dev, "RC%d: PM_Enter_L23 is NOT received\n",
 			pcie_dev->rc_idx);
 
 		msm_pcie_disable(pcie_dev, PM_PIPE_CLK | PM_CLK | PM_VREG);
+	}
 
 	if (pcie_dev->use_pinctrl && pcie_dev->pins_sleep)
 		pinctrl_select_state(pcie_dev->pinctrl,

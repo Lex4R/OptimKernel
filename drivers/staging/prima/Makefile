@@ -14,4 +14,5 @@ clean::
 	rm -f *.o *.ko *.mod.c *.mod.o *~ .*.cmd Module.symvers
 	rm -rf .tmp_versions
 
-
+# Fix build for GCC
+EXTRA_CFLAGS += -Wno-maybe-uninitialized -Wno-unused-function -Wno-error -Wno-misleading-indentation -Wno-switch-unreachable -Wno-array-paramter
