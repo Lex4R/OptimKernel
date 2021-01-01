@@ -811,13 +811,14 @@ static void msm8x16_wcd_mbhc_calc_impedance(struct wcd_mbhc *mbhc, uint32_t *zl,
 					0x06, 0x06);
 					wcd_mbhc_meas_imped(codec, &impedance_l,
 							    &impedance_r);
-					if (impedance_r == impedance_l)
+					if (impedance_r == impedance_l) {
 						pr_debug("%s: Mono Headset\n",
 							  __func__);
 						msm8x16_wcd->imped_det_pin =
 							WCD_MBHC_DET_NONE;
 						mbhc->hph_type =
 							WCD_MBHC_HPH_MONO;
+					}
 				} else {
 					pr_debug("%s: STEREO headset is found\n",
 						 __func__);
