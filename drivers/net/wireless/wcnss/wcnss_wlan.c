@@ -2645,7 +2645,7 @@ static int wcnss_ctrl_open(struct inode *inode, struct file *file)
 	return rc;
 }
 
-int wcnss_get_wlan_nv_name(char *nv_name)
+int wcnss_get_wlan_nv_name(char nv_name[50])
 {
 	if (!penv)
 		return -ENODEV;
