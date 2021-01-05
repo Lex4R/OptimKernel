@@ -217,10 +217,10 @@ static inline void config_sctlr_el1(u32 clear, u32 set)
 {
 	u32 val;
 
-	asm volatile("mrs %0, sctlr_el1" : "=r" (val));
+	asm volatile("mrs %x0, sctlr_el1" : "=r" (val));
 	val &= ~clear;
 	val |= set;
-	asm volatile("msr sctlr_el1, %0" : : "r" (val));
+	asm volatile("msr sctlr_el1, %x0" : : "r" (val));
 }
 
 /*
