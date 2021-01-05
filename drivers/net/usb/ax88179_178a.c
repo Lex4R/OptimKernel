@@ -1196,7 +1196,7 @@ static int ax88179_bind(struct usbnet *dev, struct usb_interface *intf)
 	if (ret)
 		goto out;
 
-		netdev_dbg(dev->net, "MAC [%02x-%02x-%02x-%02x-%02x-%02x]\n",
+	netdev_dbg(dev->net, "MAC [%02x-%02x-%02x-%02x-%02x-%02x]\n",
 			   dev->net->dev_addr[0], dev->net->dev_addr[1],
 			   dev->net->dev_addr[2], dev->net->dev_addr[3],
 			   dev->net->dev_addr[4], dev->net->dev_addr[5]);
