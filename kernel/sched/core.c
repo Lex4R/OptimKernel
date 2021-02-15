@@ -7945,6 +7945,11 @@ out_irq:
 }
 EXPORT_SYMBOL_GPL(yield_to);
 
+static inline void io_schedule(void)
+{
+	io_schedule_timeout(MAX_SCHEDULE_TIMEOUT);
+}
+
 /*
  * This task is about to go to sleep on IO. Increment rq->nr_iowait so
  * that process accounting knows that this is a task in IO wait state.
