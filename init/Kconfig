@@ -1420,6 +1420,18 @@ config CC_OPTIMIZE_FOR_SIZE
 config LTO
 	bool "Enable Link Time Optimization"
 	select THIN_ARCHIVES
+	help
+	  This doesn't affect anything but Clang and GCC.
+
+config LTO_THIN
+	bool "Use Clang ThinLTO"
+	depends on LTO
+	help
+	  This option enables ThinLTO, an alternative to monolithic LTO which is
+	  less resource-intensive resulting in significantly faster compilation
+	  while preserving many of the performance benefits associated with
+	  traditional LTO. This can be particularly useful for development and
+	  incremental builds. This doesn't affect anything but Clang.
 
 config SYSCTL
 	bool
