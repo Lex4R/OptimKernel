@@ -346,6 +346,9 @@ include $(srctree)/scripts/Kbuild.include
 # Make variables (CC, etc...)
 AS		= $(CROSS_COMPILE)as
 LD		= $(CROSS_COMPILE)ld
+LDBFD           = $(CROSS_COMPILE)ld.bfd
+LDGOLD		= $(CROSS_COMPILE)ld.gold
+LDLLD           = ld.lld
 CC		= $(CROSS_COMPILE)gcc
 CPP		= $(CC) -E
 AR		= $(CROSS_COMPILE)ar
@@ -636,13 +639,47 @@ LDFINAL       := $(CONFIG_SHELL) $(srctree)/scripts/gcc-ld $(LTO_LDFLAGS)
 AR            := $(CROSS_COMPILE)gcc-ar
 NM            := $(CROSS_COMPILE)gcc-nm
 DISABLE_LTO   := -fno-lto
-export DISABLE_LTO LDFINAL
+export DISABLE_LTO
+endif
+ifeq ($(cc-name),clang)
+ifdef CONFIG_LTO_THIN
+LTO_CFLAGS  	   := -flto=thin
+ifeq ($(ld-name),lld)
+LDFLAGS		+= --thinlto-cache-dir=.thinlto-cache
+else
+LDFLAGS		+= --plugin-opt=cache-dir=.thinlto-cache
+endif
+else
+LTO_CFLAGS  	   := -flto
+endif
+LTO_CFLAGS         += -fvisibility=hidden
+DISABLE_LTO_CLANG  := -fno-lto -fvisibility=default
+DISABLE_LTO	   := $(DISABLE_LTO_CLANG)
+# use GNU gold with LLVMgold for LTO linking, and LD for vmlinux_link
+LDFINAL            := $(LDBFD)
+ifeq ($(ld-name),gold)
+LDFLAGS            += -plugin LLVMgold.so
+endif
+LDFLAGS		   += -plugin-opt=-function-sections
+LDFLAGS		   += -plugin-opt=-data-sections
+# use llvm-ar for building symbol tables from IR files, and llvm-dis instead
+# of objdump for processing symbol versions and exports
+LLVM_AR		  = llvm-ar
+LLVM_DIS	  = llvm-dis
+# Prepend something similar to an config because clang has many special cases
+LTO_CLANG         := y
+export LLVM_AR LLVM_DIS LTO_CLANG DISABLE_LTO_CLANG
 endif
 KBUILD_CFLAGS	+= $(LTO_CFLAGS)
+export LTO_CFLAGS
+else
+ifeq ($(ld-name),gold)
+LDFINAL       := $(LDBFD)
 else
 LDFINAL       := $(LD)
-export LDFINAL
 endif
+endif
+export LDFINAL
 
 include $(srctree)/arch/$(SRCARCH)/Makefile
 
@@ -1080,6 +1117,27 @@ prepare0: archprepare
 
 # All the preparing..
 prepare: prepare0
+
+# Make sure we're using a supported toolchain with LTO+CLANG
+ifeq ($(cc-name),clang)
+ifdef CONFIG_LTO
+  ifneq ($(call clang-ifversion, -ge, 0500, y), y)
+	@echo Cannot use CONFIG_LTO with Clang: requires clang 5.0 or later >&2 && exit 1
+  endif
+  ifneq ($(ld-name), lld)
+    ifneq ($(call gold-ifversion, -ge, 112000000, y), y)
+      @echo Cannot use CONFIG_LTO with Clang: requires LLD or GNU gold 1.12 or later >&2 && exit 1
+    endif
+  endif
+endif
+endif
+# Make sure compiler supports LTO flags
+ifdef LTO_CFLAGS
+  ifeq ($(call cc-option, $(LTO_CFLAGS)),)
+	@echo Cannot use CONFIG_LTO: $(LTO_CFLAGS) not supported by compiler \
+		>&2 && exit 1
+  endif
+endif
 
 # Generate some files
 # ---------------------------------------------------------------------------
@@ -1534,7 +1592,8 @@ clean: $(clean-dirs)
 		-o -name '*.symtypes' -o -name 'modules.order' \
 		-o -name modules.builtin -o -name '.tmp_*.o.*' \
 		-o -name '*.ll' \
-		-o -name '*.gcno' \) -type f -print | xargs rm -f
+		-o -name '*.gcno' \
+		-o -name '*.*.symversions' \) -type f -print | xargs rm -f
 
 # Generate tags for editors
 # ---------------------------------------------------------------------------
