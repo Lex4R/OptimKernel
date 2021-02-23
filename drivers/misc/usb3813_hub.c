@@ -554,8 +554,11 @@ static void usb3813_attach_w(struct work_struct *work)
 		return;
 
 	dev_dbg(info->dev, "%s\n", __func__);
+
+#ifdef CONFIG_SLIMPORT_COMMON
 	/* Reset the slimport since USB2 shares lines */
 	slimport_reset_standby();
+#endif
 
 	ret = usb3813_write_cfg_reg(info, HS_P2_BOOST, boost_val);
 	if (ret < 0)
