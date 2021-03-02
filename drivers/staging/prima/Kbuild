@@ -777,6 +777,9 @@ else
 EXTRA_CFLAGS += -Wno-switch-unreachable -Wno-array-parameter
 endif
 
+# I don't want your crashes, prima
+KBUILD_CFLAGS := $(filter-out $(LTO_CFLAGS), $(KBUILD_CFLAGS))
+
 ifeq ($(CONFIG_WLAN_OFFLOAD_PACKETS),y)
 CDEFINES += -DWLAN_FEATURE_OFFLOAD_PACKETS
 endif
