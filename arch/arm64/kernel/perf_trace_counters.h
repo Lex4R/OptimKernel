@@ -63,7 +63,7 @@ TRACE_EVENT(sched_switch_with_ctrs,
 			cnten_val = per_cpu(cntenset_val, cpu);
 
 			if (cnten_val & CC) {
-				asm volatile("mrs %0, pmccntr_el0"
+				asm volatile("mrs %x0, pmccntr_el0"
 							: "=r" (total_ccnt));
 				/* Read value */
 				__entry->cctr = total_ccnt -
@@ -73,10 +73,10 @@ TRACE_EVENT(sched_switch_with_ctrs,
 			for (i = 0; i < NUM_L1_CTRS; i++) {
 				if (cnten_val & (1 << i)) {
 					/* Select */
-					asm volatile("msr pmselr_el0, %0"
+					asm volatile("msr pmselr_el0, %x0"
 							: : "r" (i));
 					isb();
-					asm volatile("mrs %0, pmxevcntr_el0"
+					asm volatile("mrs %x0, pmxevcntr_el0"
 							: "=r" (total_cnt));
 					/* Read value */
 					delta_l1_cnts[i] = total_cnt -

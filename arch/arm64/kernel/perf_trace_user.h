@@ -42,18 +42,18 @@ TRACE_EVENT(perf_trace_user,
 
 		if (cnten_val & CNTENSET_CC) {
 			/* Read value */
-			asm volatile("mrs %0, pmccntr_el0" : "=r" (cnt));
+			asm volatile("mrs %x0, pmccntr_el0" : "=r" (cnt));
 			__entry->cctr = cnt;
 		} else
 			__entry->cctr = 0;
 		for (i = 0; i < NUM_L1_CTRS; i++) {
 			if (cnten_val & (1 << i)) {
 				/* Select */
-				asm volatile("msr pmselr_el0, %0"
+				asm volatile("msr pmselr_el0, %x0"
 					     : : "r" (i));
 				isb();
 				/* Read value */
-				asm volatile("mrs %0, pmxevcntr_el0"
+				asm volatile("mrs %x0, pmxevcntr_el0"
 					     : "=r" (cnt));
 				l1_cnts[i] = cnt;
 			} else {
