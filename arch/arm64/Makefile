@@ -64,11 +64,17 @@ KBUILD_AFLAGS	+= $(call cc-option,-mabi=lp64)
 ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
 KBUILD_CPPFLAGS	+= -mbig-endian
 AS		+= -EB
-LDFLAGS		+= -EB $(call ld-option, -maarch64elfb, -maarch64linuxb)
+LDFLAGS		+= -EB $(call ld-option,$(call ld-option, -maarch64elfb, -maarch64_elf64_be_vec), -maarch64linuxb)
+ifeq ($(ld-name),gold)
+KBUILD_CFLAGS 	+= $(call cc-option,$(call cc-option, -Wl,-maarch64elfb, -Wl,-maarch64_elf64_be_vec), -Wl,-maarch64linuxb)
+endif
 else
 KBUILD_CPPFLAGS	+= -mlittle-endian
 AS		+= -EL
-LDFLAGS		+= -EL $(call ld-option, -maarch64elf, -maarch64linux)
+LDFLAGS		+= -EL $(call ld-option,$(call ld-option, -maarch64elf, -maarch64_elf64_le_vec), -maarch64linux)
+ifeq ($(ld-name),gold)
+KBUILD_CFLAGS	+= $(call cc-option,$(call cc-option, -Wl,-maarch64elf, -Wl,-maarch64_elf64_le_vec), -Wl,-maarch64linux)
+endif
 endif
 
 CHECKFLAGS	+= -D__aarch64__
