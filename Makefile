@@ -626,6 +626,12 @@ KBUILD_AFLAGS	+= $(CLANG_FLAGS)
 ifeq ($(ld-name),lld)
 KBUILD_CFLAGS	+= -fuse-ld=lld
 endif
+ifeq ($(ld-name),gold)
+KBUILD_CFLAGS 	+= -fuse-ld=gold
+endif
+ifeq ($(ld-name),bfd)
+KBUILD_CFLAGS	+= -fuse-ld=bfd
+endif
 ifdef CONFIG_LLVM_POLLY
 KBUILD_CFLAGS	+= -mllvm -polly \
 		   -mllvm -polly-run-dce \
