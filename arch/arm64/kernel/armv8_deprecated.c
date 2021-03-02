@@ -284,8 +284,8 @@ do {								\
 	uaccess_enable();					\
 	__asm__ __volatile__(					\
 	"	mov		%w2, %w1\n"			\
-	"0:	ldxr"B"		%w1, [%3]\n"			\
-	"1:	stxr"B"		%w0, %w2, [%3]\n"		\
+	"0:	ldxr"B"		%w1, [%x3]\n"			\
+	"1:	stxr"B"		%w0, %w2, [%x3]\n"		\
 	"	cbz		%w0, 2f\n"			\
 	"	mov		%w0, %w4\n"			\
 	"2:\n"							\

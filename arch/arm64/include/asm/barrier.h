@@ -73,7 +73,7 @@ do {									\
 			: "=r" (___p1) : "Q" (*p) : "memory");		\
 		break;							\
 	case 8:								\
-		asm volatile ("ldar %0, %1"				\
+		asm volatile ("ldar %w0, %1"				\
 			: "=r" (___p1) : "Q" (*p) : "memory");		\
 		break;							\
 	}								\

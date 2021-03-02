@@ -161,38 +161,38 @@ static const struct errors_edac errors[] = {
 
 #define read_l2merrsr_el1 ({                                           \
 	u64 __val;                                                     \
-	asm("mrs %0, s3_1_c15_c2_3" : "=r" (__val));                  \
+	asm("mrs %x0, s3_1_c15_c2_3" : "=r" (__val));                  \
 	__val;                                                         \
 })
 
 #define read_l2ectlr_el1 ({						\
 	u32 __val;							\
-	asm("mrs %0, s3_1_c11_c0_3" : "=r" (__val));			\
+	asm("mrs %x0, s3_1_c11_c0_3" : "=r" (__val));			\
 	__val;								\
 })
 
 #define read_cpumerrsr_el1 ({						\
 	u64 __val;							\
-	asm("mrs %0, s3_1_c15_c2_2" : "=r" (__val));			\
+	asm("mrs %x0, s3_1_c15_c2_2" : "=r" (__val));			\
 	__val;								\
 })
 
 #define read_esr_el1 ({							\
 	u64 __val;							\
-	asm("mrs %0, esr_el1" : "=r" (__val));				\
+	asm("mrs %x0, esr_el1" : "=r" (__val));				\
 	__val;								\
 })
 
 #define write_l2merrsr_el1(val) ({					\
-	asm("msr s3_1_c15_c2_3, %0" : : "r" (val));			\
+	asm("msr s3_1_c15_c2_3, %x0" : : "r" (val));			\
 })
 
 #define write_l2ectlr_el1(val) ({					\
-	asm("msr s3_1_c11_c0_3, %0" : : "r" (val));			\
+	asm("msr s3_1_c11_c0_3, %x0" : : "r" (val));			\
 })
 
 #define write_cpumerrsr_el1(val) ({					\
-	asm("msr s3_1_c15_c2_2, %0" : : "r" (val));			\
+	asm("msr s3_1_c15_c2_2, %x0" : : "r" (val));			\
 })
 
 static void ca53_ca57_print_error_state_regs(void)

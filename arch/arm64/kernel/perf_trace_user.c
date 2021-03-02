@@ -59,14 +59,14 @@ static ssize_t perf_trace_write(struct file *file,
 	preempt_disable();
 	/* stop counters, call the trace function, restart them */
 
-	asm volatile("mrs %0, pmcntenset_el0" : "=r" (cnten_val));
+	asm volatile("mrs %x0, pmcntenset_el0" : "=r" (cnten_val));
 	/* Disable all the counters that were enabled */
-	asm volatile("msr pmcntenclr_el0, %0" : : "r" (cnten_val));
+	asm volatile("msr pmcntenclr_el0, %x0" : : "r" (cnten_val));
 
 	trace_perf_trace_user(buf, cnten_val);
 
 	/* Enable all the counters that were disabled */
-	asm volatile("msr pmcntenset_el0, %0" : : "r" (cnten_val));
+	asm volatile("msr pmcntenset_el0, %x0" : : "r" (cnten_val));
 	preempt_enable();
 
 	return length;
