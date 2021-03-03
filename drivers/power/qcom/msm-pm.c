@@ -104,9 +104,9 @@ static bool msm_pm_is_L1_writeback(void)
 	return cache_id & BIT(30);
 #elif defined(CONFIG_ARM64)
 	u32 sel = 0;
-	asm volatile("msr csselr_el1, %[ccselr]\n\t"
+	asm volatile("msr csselr_el1, %x[ccselr]\n\t"
 		     "isb\n\t"
-		     "mrs %[ccsidr],ccsidr_el1\n\t"
+		     "mrs %x[ccsidr],ccsidr_el1\n\t"
 		     :[ccsidr]"=r" (cache_id)
 		     :[ccselr]"r" (sel)
 		    );
