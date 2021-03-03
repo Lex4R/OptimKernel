@@ -674,13 +674,12 @@ endif
 LTO_CFLAGS         += -fvisibility=hidden
 DISABLE_LTO_CLANG  := -fno-lto -fvisibility=default
 DISABLE_LTO	   := $(DISABLE_LTO_CLANG)
-# use GNU gold with LLVMgold for LTO linking, and LD for vmlinux_link
-LDFINAL            := $(LDBFD)
+LDFINAL            := $(LD)
 ifeq ($(ld-name),gold)
 LDFLAGS            += -plugin LLVMgold.so
-endif
 LDFLAGS		   += -plugin-opt=-function-sections
 LDFLAGS		   += -plugin-opt=-data-sections
+endif
 # use llvm-ar for building symbol tables from IR files, and llvm-dis instead
 # of objdump for processing symbol versions and exports
 LLVM_AR		  = llvm-ar
