@@ -200,10 +200,10 @@ static u32 smc(u32 cmd_addr)
 	register u32 r2 asm(R2_STR) = cmd_addr;
 	do {
 		asm volatile(
-			__asmeq("%0", R0_STR)
-			__asmeq("%1", R0_STR)
-			__asmeq("%2", R1_STR)
-			__asmeq("%3", R2_STR)
+			__asmeq("%x0", R0_STR)
+			__asmeq("%x1", R0_STR)
+			__asmeq("%x2", R1_STR)
+			__asmeq("%x3", R2_STR)
 #ifdef REQUIRES_SEC
 			".arch_extension sec\n"
 #endif
@@ -442,20 +442,20 @@ static int __scm_call_armv8_32(u32 w0, u32 w1, u32 w2, u32 w3, u32 w4, u32 w5,
 
 	do {
 		asm volatile(
-			__asmeq("%0", R0_STR)
-			__asmeq("%1", R1_STR)
-			__asmeq("%2", R2_STR)
-			__asmeq("%3", R3_STR)
-			__asmeq("%4", R4_STR)
-			__asmeq("%5", R5_STR)
-			__asmeq("%6", R6_STR)
-			__asmeq("%7", R0_STR)
-			__asmeq("%8", R1_STR)
-			__asmeq("%9", R2_STR)
-			__asmeq("%10", R3_STR)
-			__asmeq("%11", R4_STR)
-			__asmeq("%12", R5_STR)
-			__asmeq("%13", R6_STR)
+			__asmeq("%x0", R0_STR)
+			__asmeq("%x1", R1_STR)
+			__asmeq("%x2", R2_STR)
+			__asmeq("%x3", R3_STR)
+			__asmeq("%x4", R4_STR)
+			__asmeq("%x5", R5_STR)
+			__asmeq("%x6", R6_STR)
+			__asmeq("%x7", R0_STR)
+			__asmeq("%x8", R1_STR)
+			__asmeq("%x9", R2_STR)
+			__asmeq("%x10", R3_STR)
+			__asmeq("%x11", R4_STR)
+			__asmeq("%x12", R5_STR)
+			__asmeq("%x13", R6_STR)
 #ifdef REQUIRES_SEC
 			".arch_extension sec\n"
 #endif
@@ -849,10 +849,10 @@ s32 scm_call_atomic1(u32 svc, u32 cmd, u32 arg1)
 	register u32 r2 asm(R2_STR) = arg1;
 
 	asm volatile(
-		__asmeq("%0", R0_STR)
-		__asmeq("%1", R0_STR)
-		__asmeq("%2", R1_STR)
-		__asmeq("%3", R2_STR)
+		__asmeq("%x0", R0_STR)
+		__asmeq("%x1", R0_STR)
+		__asmeq("%x2", R1_STR)
+		__asmeq("%x3", R2_STR)
 #ifdef REQUIRES_SEC
 			".arch_extension sec\n"
 #endif
@@ -882,11 +882,11 @@ s32 scm_call_atomic1_1(u32 svc, u32 cmd, u32 arg1, u32 *ret1)
 	register u32 r2 asm(R2_STR) = arg1;
 
 	asm volatile(
-		__asmeq("%0", R0_STR)
-		__asmeq("%1", R1_STR)
-		__asmeq("%2", R0_STR)
-		__asmeq("%3", R1_STR)
-		__asmeq("%4", R2_STR)
+		__asmeq("%x0", R0_STR)
+		__asmeq("%x1", R1_STR)
+		__asmeq("%x2", R0_STR)
+		__asmeq("%x3", R1_STR)
+		__asmeq("%x4", R2_STR)
 #ifdef REQUIRES_SEC
 			".arch_extension sec\n"
 #endif
@@ -919,11 +919,11 @@ s32 scm_call_atomic2(u32 svc, u32 cmd, u32 arg1, u32 arg2)
 	register u32 r3 asm(R3_STR) = arg2;
 
 	asm volatile(
-		__asmeq("%0", R0_STR)
-		__asmeq("%1", R0_STR)
-		__asmeq("%2", R1_STR)
-		__asmeq("%3", R2_STR)
-		__asmeq("%4", R3_STR)
+		__asmeq("%x0", R0_STR)
+		__asmeq("%x1", R0_STR)
+		__asmeq("%x2", R1_STR)
+		__asmeq("%x3", R2_STR)
+		__asmeq("%x4", R3_STR)
 #ifdef REQUIRES_SEC
 			".arch_extension sec\n"
 #endif
@@ -955,12 +955,12 @@ s32 scm_call_atomic3(u32 svc, u32 cmd, u32 arg1, u32 arg2, u32 arg3)
 	register u32 r4 asm(R4_STR) = arg3;
 
 	asm volatile(
-		__asmeq("%0", R0_STR)
-		__asmeq("%1", R0_STR)
-		__asmeq("%2", R1_STR)
-		__asmeq("%3", R2_STR)
-		__asmeq("%4", R3_STR)
-		__asmeq("%5", R4_STR)
+		__asmeq("%x0", R0_STR)
+		__asmeq("%x1", R0_STR)
+		__asmeq("%x2", R1_STR)
+		__asmeq("%x3", R2_STR)
+		__asmeq("%x4", R3_STR)
+		__asmeq("%x5", R4_STR)
 #ifdef REQUIRES_SEC
 			".arch_extension sec\n"
 #endif
@@ -984,13 +984,13 @@ s32 scm_call_atomic4_3(u32 svc, u32 cmd, u32 arg1, u32 arg2,
 	register u32 r5 asm(R5_STR) = arg4;
 
 	asm volatile(
-		__asmeq("%0", R0_STR)
-		__asmeq("%1", R1_STR)
-		__asmeq("%2", R2_STR)
-		__asmeq("%3", R0_STR)
-		__asmeq("%4", R1_STR)
-		__asmeq("%5", R2_STR)
-		__asmeq("%6", R3_STR)
+		__asmeq("%x0", R0_STR)
+		__asmeq("%x1", R1_STR)
+		__asmeq("%x2", R2_STR)
+		__asmeq("%x3", R0_STR)
+		__asmeq("%x4", R1_STR)
+		__asmeq("%x5", R2_STR)
+		__asmeq("%x6", R3_STR)
 #ifdef REQUIRES_SEC
 			".arch_extension sec\n"
 #endif
@@ -1036,14 +1036,14 @@ s32 scm_call_atomic5_3(u32 svc, u32 cmd, u32 arg1, u32 arg2,
 	register u32 r6 asm(R6_STR) = arg5;
 
 	asm volatile(
-		__asmeq("%0", R0_STR)
-		__asmeq("%1", R1_STR)
-		__asmeq("%2", R2_STR)
-		__asmeq("%3", R3_STR)
-		__asmeq("%4", R0_STR)
-		__asmeq("%5", R1_STR)
-		__asmeq("%6", R2_STR)
-		__asmeq("%7", R3_STR)
+		__asmeq("%x0", R0_STR)
+		__asmeq("%x1", R1_STR)
+		__asmeq("%x2", R2_STR)
+		__asmeq("%x3", R3_STR)
+		__asmeq("%x4", R0_STR)
+		__asmeq("%x5", R1_STR)
+		__asmeq("%x6", R2_STR)
+		__asmeq("%x7", R3_STR)
 #ifdef REQUIRES_SEC
 			".arch_extension sec\n"
 #endif
@@ -1079,10 +1079,10 @@ u32 scm_get_version(void)
 	r1 = (uintptr_t)&context_id;
 	do {
 		asm volatile(
-			__asmeq("%0", R0_STR)
-			__asmeq("%1", R1_STR)
-			__asmeq("%2", R0_STR)
-			__asmeq("%3", R1_STR)
+			__asmeq("%x0", R0_STR)
+			__asmeq("%x1", R1_STR)
+			__asmeq("%x2", R0_STR)
+			__asmeq("%x3", R1_STR)
 #ifdef REQUIRES_SEC
 			".arch_extension sec\n"
 #endif
