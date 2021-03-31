@@ -647,6 +647,9 @@ AR            := $(CROSS_COMPILE)gcc-ar
 NM            := $(CROSS_COMPILE)gcc-nm
 DISABLE_LTO   := -fno-lto
 export DISABLE_LTO LDFINAL
+ifdef CONFIG_GRAPHITE
+LTO_CFLAGS    += -floop-interchange -ftree-loop-distribution -floop-strip-mine -floop-block -ftree-vectorize
+endif
 endif
 KBUILD_CFLAGS	+= $(LTO_CFLAGS)
 else
