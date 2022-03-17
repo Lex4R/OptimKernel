@@ -648,7 +648,7 @@ NM            := $(CROSS_COMPILE)gcc-nm
 DISABLE_LTO   := -fno-lto
 export DISABLE_LTO LDFINAL
 ifdef CONFIG_GRAPHITE
-LTO_CFLAGS    += -floop-interchange -ftree-loop-distribution -floop-strip-mine -floop-block -ftree-vectorize
+LTO_CFLAGS    += -floop-interchange -ftree-loop-distribution -floop-strip-mine -floop-block -ftree-vectorize -fgraphite-identity -floop-nest-optimize
 endif
 endif
 KBUILD_CFLAGS	+= $(LTO_CFLAGS)
@@ -873,6 +873,10 @@ KBUILD_CFLAGS   += $(call cc-option,-Werror=date-time)
 
 # use the deterministic mode of AR if available
 KBUILD_ARFLAGS := $(call ar-option,D)
+
+# As per gcc docs when using computed gotos disabling could
+# result in better run-time performing
+KBUILD_CFLAGS   += -fno-gcse
 
 # check for 'asm goto'
 ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(CC)), y)
