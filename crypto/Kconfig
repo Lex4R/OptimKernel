@@ -87,8 +87,6 @@ config CRYPTO_PCOMP2
 	tristate
 	select CRYPTO_ALGAPI2
 
-<<<<<<< HEAD
-=======
 config CRYPTO_KPP
 	tristate
 	select CRYPTO_ALGAPI
