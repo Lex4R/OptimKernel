@@ -115,105 +115,6 @@ ENTRY(memcmp)
 	ldr	data1w, [src1], 4
 	ldr	data2w, [src2], 4
 	cmp	data1w, data2w
-<<<<<<< HEAD
-	b.eq	.Lstart_align
-1:
-	sub	result, data1, data2
-	ret
-
-.Lstart_align:
-	lsr	limit_wd, limit, #3
-	cbz	limit_wd, .Lremain8
-
-	ands	xzr, src1, #7
-	b.eq	.Lrecal_offset
-	/*process more leading bytes to make src1 aligned...*/
-	add	src1, src1, tmp3 /*backwards src1 to alignment boundary*/
-	add	src2, src2, tmp3
-	sub	limit, limit, tmp3
-	lsr	limit_wd, limit, #3
-	cbz	limit_wd, .Lremain8
-	/*load 8 bytes from aligned SRC1..*/
-	ldr	data1, [src1], #8
-	ldr	data2, [src2], #8
-
-	subs	limit_wd, limit_wd, #1
-	eor	diff, data1, data2  /*Non-zero if differences found.*/
-	csinv	endloop, diff, xzr, ne
-	cbnz	endloop, .Lunequal_proc
-	/*How far is the current SRC2 from the alignment boundary...*/
-	and	tmp3, tmp3, #7
-
-.Lrecal_offset:/*src1 is aligned now..*/
-	neg	pos, tmp3
-.Lloopcmp_proc:
-	/*
-	* Divide the eight bytes into two parts. First,backwards the src2
-	* to an alignment boundary,load eight bytes and compare from
-	* the SRC2 alignment boundary. If all 8 bytes are equal,then start
-	* the second part's comparison. Otherwise finish the comparison.
-	* This special handle can garantee all the accesses are in the
-	* thread/task space in avoid to overrange access.
-	*/
-	ldr	data1, [src1,pos]
-	ldr	data2, [src2,pos]
-	eor	diff, data1, data2  /* Non-zero if differences found.  */
-	cbnz	diff, .Lnot_limit
-
-	/*The second part process*/
-	ldr	data1, [src1], #8
-	ldr	data2, [src2], #8
-	eor	diff, data1, data2  /* Non-zero if differences found.  */
-	subs	limit_wd, limit_wd, #1
-	csinv	endloop, diff, xzr, ne/*if limit_wd is 0,will finish the cmp*/
-	cbz	endloop, .Lloopcmp_proc
-.Lunequal_proc:
-	cbz	diff, .Lremain8
-
-/*There is differnence occured in the latest comparison.*/
-.Lnot_limit:
-/*
-* For little endian,reverse the low significant equal bits into MSB,then
-* following CLZ can find how many equal bits exist.
-*/
-CPU_LE( rev	diff, diff )
-CPU_LE( rev	data1, data1 )
-CPU_LE( rev	data2, data2 )
-
-	/*
-	* The MS-non-zero bit of DIFF marks either the first bit
-	* that is different, or the end of the significant data.
-	* Shifting left now will bring the critical information into the
-	* top bits.
-	*/
-	clz	pos, diff
-	lsl	data1, data1, pos
-	lsl	data2, data2, pos
-	/*
-	* We need to zero-extend (char is unsigned) the value and then
-	* perform a signed subtraction.
-	*/
-	lsr	data1, data1, #56
-	sub	result, data1, data2, lsr #56
-	ret
-
-.Lremain8:
-	/* Limit % 8 == 0 =>. all data are equal.*/
-	ands	limit, limit, #7
-	b.eq	.Lret0
-
-.Ltiny8proc:
-	ldrb	data1w, [src1], #1
-	ldrb	data2w, [src2], #1
-	subs	limit, limit, #1
-
-	ccmp	data1w, data2w, #0, ne  /* NZCV = 0b0000. */
-	b.eq	.Ltiny8proc
-	sub	result, data1, data2
-	ret
-.Lret0:
-	mov	result, #0
-=======
 	b.ne	.Lreturn
 	sub	limit, limit, 4
 .Lless4:
@@ -226,6 +127,5 @@ CPU_LE( rev	data2, data2 )
 	ccmp	data1w, data2w, 0, ne	/* NZCV = 0b0000.  */
 	b.eq	.Lbyte_loop
 	sub	result, data1w, data2w
->>>>>>> a41f37df4e6e9 (arm64: Use optimized memcmp)
 	ret
 ENDPIPROC(memcmp)
