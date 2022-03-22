@@ -119,7 +119,7 @@ KBUILD_IMAGE   := $(addsuffix -dtb,$(KBUILD_IMAGE))
 endif
 
 ifeq ($(CONFIG_ARCH_MSM8937), y)
-KBUILD_CFLAGS	+= -mcpu=cortex-a53
+KBUILD_CFLAGS	+= -mcpu=cortex-a53+crypto
 endif
 
 KBUILD_DTBS	:= dtbs
