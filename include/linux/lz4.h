@@ -1,4 +1,4 @@
-* LZ4 Kernel Interface
+/* LZ4 Kernel Interface
  *
  * Copyright (C) 2013, LG Electronics, Kyungsik Lee <kyungsik.lee@lge.com>
  * Copyright (C) 2016, Sven Schmidt <4sschmid@informatik.uni-hamburg.de>
