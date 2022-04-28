@@ -552,7 +552,7 @@ static const struct file_operations zs_stat_size_ops = {
 	.release        = single_release,
 };
 
-static int zs_pool_stat_create(struct zs_pool *pool, const char *name)
+static int zs_pool_stat_create(char *name, struct zs_pool *pool)
 {
 	struct dentry *entry;
 
@@ -592,7 +592,7 @@ static void __exit zs_stat_exit(void)
 {
 }
 
-static inline int zs_pool_stat_create(struct zs_pool *pool, const char *name)
+static inline int zs_pool_stat_create(char *name, struct zs_pool *pool)
 {
 	return 0;
 }
@@ -1710,6 +1710,24 @@ static struct page *isolate_source_page(struct size_class *class)
 	return page;
 }
 
+/*
+ *
+ * Based on the number of unused allocated objects calculate
+ * and return the number of pages that we can free.
+ */
+static unsigned long zs_can_compact(struct size_class *class)
+{
+	unsigned long obj_wasted;
+
+	obj_wasted = zs_stat_get(class, OBJ_ALLOCATED) -
+		zs_stat_get(class, OBJ_USED);
+
+	obj_wasted /= get_maxobj_per_zspage(class->size,
+			class->pages_per_zspage);
+
+	return obj_wasted * class->pages_per_zspage;
+}
+
 static void __zs_compact(struct zs_pool *pool, struct size_class *class)
 {
 	struct zs_compact_control cc;
@@ -1721,6 +1739,8 @@ static void __zs_compact(struct zs_pool *pool, struct size_class *class)
 
 		BUG_ON(!is_first_page(src_page));
 
+		if (!zs_can_compact(class))
+			break;
 
 		cc.index = 0;
 		cc.s_page = src_page;
@@ -1735,7 +1755,6 @@ static void __zs_compact(struct zs_pool *pool, struct size_class *class)
 				break;
 
 			putback_zspage(pool, class, dst_page);
-
 		}
 
 		/* Stop if we couldn't find slot */
@@ -1817,6 +1836,7 @@ static unsigned long zs_shrinker_count(struct shrinker *shrinker,
 		if (class->index != i)
 			continue;
 
+		pages_to_free += zs_can_compact(class);
 	}
 
 	return pages_to_free;
