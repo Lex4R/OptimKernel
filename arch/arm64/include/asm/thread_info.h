@@ -65,7 +65,6 @@ struct thread_info {
 #ifdef CONFIG_THREAD_INFO_IN_TASK
 #define INIT_THREAD_INFO(tsk)						\
 {									\
-	.exec_domain    = &default_exec_domain,				\
 	.preempt_count	= INIT_PREEMPT_COUNT,				\
 	.addr_limit	= KERNEL_DS,					\
 }
@@ -79,7 +78,9 @@ struct thread_info {
 	.addr_limit	= KERNEL_DS,					\
 }
 
+#ifndef CONFIG_THREAD_INFO_IN_TASK
 #define init_thread_info	(init_thread_union.thread_info)
+#endif
 
 
 /*
