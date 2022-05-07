@@ -158,7 +158,8 @@ static void tk_setup_internals(struct timekeeper *tk, struct clocksource *clock)
 	/* Go back from cycles -> shifted ns */
 	tk->xtime_interval = (u64) interval * clock->mult;
 	tk->xtime_remainder = ntpinterval - tk->xtime_interval;
-	tk->raw_interval = interval * clock->mult;
+	tk->raw_interval =
+		((u64) interval * clock->mult) >> clock->shift;
 
 	 /* if changing clocks, convert xtime_nsec shift units */
 	if (old_clock) {
@@ -1503,7 +1504,7 @@ static cycle_t logarithmic_accumulation(struct timekeeper *tk, cycle_t offset,
 						unsigned int *clock_set)
 {
 	cycle_t interval = tk->cycle_interval << shift;
-	u64 snsec_per_sec;
+	u64 raw_nsecs;
 
 	/* If the offset is smaller then a shifted interval, do nothing */
 	if (offset < interval)
@@ -1518,15 +1519,14 @@ static cycle_t logarithmic_accumulation(struct timekeeper *tk, cycle_t offset,
 	*clock_set |= accumulate_nsecs_to_secs(tk);
 
 	/* Accumulate raw time */
-	tk->tkr_raw.xtime_nsec += (u64)tk->raw_time.tv_nsec << tk->tkr_raw.shift;
-	tk->tkr_raw.xtime_nsec += tk->raw_interval << shift;
-	snsec_per_sec = (u64)NSEC_PER_SEC << tk->tkr_raw.shift;
-	while (tk->tkr_raw.xtime_nsec >= snsec_per_sec) {
-		tk->tkr_raw.xtime_nsec -= snsec_per_sec;
-		tk->raw_time.tv_sec++;
+	raw_nsecs = (u64)tk->raw_interval << shift;
+	raw_nsecs += tk->raw_time.tv_nsec;
+	if (raw_nsecs >= NSEC_PER_SEC) {
+		u64 raw_secs = raw_nsecs;
+		raw_nsecs = do_div(raw_secs, NSEC_PER_SEC);
+		tk->raw_time.tv_sec += raw_secs;
 	}
-	tk->raw_time.tv_nsec = tk->tkr_raw.xtime_nsec >> tk->tkr_raw.shift;
-	tk->tkr_raw.xtime_nsec -= (u64)tk->raw_time.tv_nsec << tk->tkr_raw.shift;
+	tk->raw_time.tv_nsec = raw_nsecs;
 
 	/* Accumulate error between NTP and clock interval */
 	tk->ntp_error += tk->ntp_tick << shift;
