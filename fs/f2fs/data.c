@@ -2013,8 +2013,8 @@ retry:
 	while (!done && (index <= end)) {
 		int i;
 
-		nr_pages = pagevec_lookup_tag(&pvec, mapping, &index, tag,
-			      min(end - index, (pgoff_t)PAGEVEC_SIZE - 1) + 1);
+		nr_pages = pagevec_lookup_range_tag(&pvec, mapping, &index, end,
+				tag, PAGEVEC_SIZE);
 		if (nr_pages == 0)
 			break;
 
@@ -2025,11 +2025,6 @@ retry:
 			/* give a priority to WB_SYNC threads */
 			if (atomic_read(&F2FS_M_SB(mapping)->wb_sync_req) &&
 					wbc->sync_mode == WB_SYNC_NONE) {
-				done = 1;
-				break;
-			}
-
-			if (page->index > end) {
 				done = 1;
 				break;
 			}
